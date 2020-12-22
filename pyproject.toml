@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "gpx-linesman"
+version = "0.1.2"
+description = "Command line tool for measuring the straightness of a gpx track"
+authors = ["burrscurr <burrscurr@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+geopy = "^2.0.0"
+gpxpy = "^1.4.2"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+linesman = 'gpx_linesman:run'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
