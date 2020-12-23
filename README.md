@@ -40,3 +40,14 @@ linesman <file.gpx> <lon_start,lat_start> <lon_end,lat_end> --using avg_m
 
 For an example gpx file, see [`examples/simple.gpx`](examples/simple.gpx).
 
+## Development
+
+Python dependencies are managed with poetry and can be installed from
+`poetry.lock` by running:
+
+```
+poetry install
+```
+
+Then, the CLI tool can be started with `poetry run linesman`.
+
