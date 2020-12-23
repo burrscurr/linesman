@@ -49,5 +49,6 @@ Python dependencies are managed with poetry and can be installed from
 poetry install
 ```
 
-Then, the CLI tool can be started with `poetry run linesman`.
+Then, the CLI tool can be started with `poetry run linesman`. Run tests with
+`poetry run pytest`.
 
