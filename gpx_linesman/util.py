@@ -1,21 +1,3 @@
-
-
-def lonlat_str(string):
-    """:return: tuple of floats"""
-    if ',' not in string:
-        raise ValueError("Format must be 'lon,lat' (missing ',')!")
-    lon, lat = string.split(',', maxsplit=1)
-    try:
-        lon = float(lon)
-    except ValueError as e:
-        raise ValueError(f"lon '{lon}' is no valid floating point number.")
-    try:
-        lat = float(lat)
-    except ValueError as e:
-        raise ValueError(f"lat '{lat}' is no valid floating point number.")
-    return lon, lat
-
-
 def project(line_a, line_b, point):
     """:return: project a point on a line"""
     # move the points such that line_a is (0, 0)

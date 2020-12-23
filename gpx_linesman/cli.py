@@ -1,7 +1,23 @@
 import argparse
 
-from .util import lonlat_str
 from .measure import MaxDeviation, AvgDeviation, AvgSquareDeviation
+
+
+def lonlat_str(string):
+    """:return: tuple of floats"""
+    if ',' not in string:
+        raise ValueError("Format must be 'lon,lat' (missing ',')!")
+    lon, lat = string.split(',', maxsplit=1)
+    try:
+        lon = float(lon)
+    except ValueError as e:
+        raise ValueError(f"lon '{lon}' is no valid floating point number.")
+    try:
+        lat = float(lat)
+    except ValueError as e:
+        raise ValueError(f"lat '{lat}' is no valid floating point number.")
+    return lon, lat
+    
 
 
 def run():
