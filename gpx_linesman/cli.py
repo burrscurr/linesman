@@ -1,5 +1,7 @@
 import argparse
 
+import gpxpy
+
 from .measure import MaxDeviation, AvgDeviation, AvgSquareDeviation
 
 
@@ -17,7 +19,29 @@ def lonlat_str(string):
     except ValueError as e:
         raise ValueError(f"lat '{lat}' is no valid floating point number.")
     return lon, lat
+
+
+def gpx_file_points(value):
+    """
+    Extract the points of the first track of a gpx file.
+    :return: list of 2-tuples in (lon, lat) form
+    """
+    file_tester = argparse.FileType('r')
+    gpxfile = file_tester(value)
     
+    gpx = gpxpy.parse(gpxfile)
+    tracks = len(gpx.tracks)
+    if tracks < 1:
+        raise ValueError('The gpx file does not contain any tracks.')
+    elif tracks > 1:
+        raise UserWarning('gpx file has multiple tracks, defaulting to first one.')
+
+    points = []
+    track = gpx.tracks[0]
+    for segment in track.segments:
+        for actual in segment.points:
+            points.append((actual.longitude, actual.latitude))
+    return points
 
 
 def run():
@@ -40,7 +64,7 @@ def run():
         help='Line quality measure to calculate'
     )
     parser.add_argument(
-        'gpxfile', type=argparse.FileType('r'),
+        'gpxfile', type=gpx_file_points,
         help='gpx file containing the GPS record that is an almost straight line'
     )
     parser.add_argument(

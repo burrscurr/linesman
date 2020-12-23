@@ -1,5 +1,4 @@
 
-import gpxpy
 from geopy.distance import geodesic, lonlat
 
 from .util import project
@@ -7,30 +6,22 @@ from .util import project
 
 
 class ScoringMethod:
-    """Abstract base class for a straight line mission scoring method."""
-    def __init__(self, gpxfile, line_start, line_end):
-        """
-        :param gpxfile: gpx file
-        :param line_start: (lon, lat) tuple marking the line start point
-        :param line_end: (lon, lat) tuple marking the line end point
-        """
-        self.measures = []
-        self.gpx = gpxpy.parse(gpxfile)
+    """Abstract base class evaluating a sequence of points to a straight line."""
 
-        # calculate the deviation measures for each point
-        track = self.gpx.tracks[0]
-        if len(self.gpx.tracks) > 1:
-            print('WARNING: gpx file has multiple tracks, defaulting to using first one.')
-        for track in self.gpx.tracks:
-            for segment in track.segments:
-                for actual in segment.points:
-                    actual_point = (actual.longitude, actual.latitude)
-                    self.measures.append(
-                        self.measure_deviation(
-                            project(line_start, line_end, actual_point),
-                            actual_point
-                        )
-                    )
+    def __init__(self, points, line_start, line_end):
+        """
+        :param points: iterable of (x,y) tuples representing points
+        :param line_start: (x,y) tuple marking the line start
+        :param line_end: (x,y) tuple marking the line end
+        """
+        # measure the deviation of each point to its projection onto the
+        # straight line
+        self.measures = [
+            self.measure_deviation(
+                project(line_start, line_end, point),
+                point
+            ) for point in points
+        ]
 
     def measure_deviation(self, point, actual):
         """:return: deviation of a point on the line to an gps point"""
