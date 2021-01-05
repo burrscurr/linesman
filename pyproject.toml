@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gpx-linesman"
-version = "0.1.2"
+version = "0.2.0"
 description = "Command line tool for measuring the straightness of a gpx track"
 authors = ["burrscurr <burrscurr@users.noreply.github.com>"]
 license = "MIT"
