@@ -1,4 +1,5 @@
 # linesman
+[![coverage](https://codecov.io/gh/burrscurr/linesman/branch/master/graph/badge.svg?token=LTDZFKEX4N)](https://codecov.io/gh/burrscurr/linesman)
 
 `linesman` is a small python command line tool calculating quality measures for the
 straightness of a gpx track. The project is inspired by the "I attempted to

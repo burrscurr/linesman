@@ -3,11 +3,7 @@
 
 name: Python application
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: ["push", "pull_request"]
 
 jobs:
   build:
@@ -29,4 +25,8 @@ jobs:
         poetry install
     - name: Run tests with pytest
       run: |
-        poetry run pytest
+        poetry run pytest --cov --cov-report=xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        files: ./coverage.xml
