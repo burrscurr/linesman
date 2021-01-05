@@ -23,7 +23,7 @@ def test_lonlat_str():
     assert lonlat_str('5.2,4.3') == (5.2, 4.3)
 
 
-def test_lonlat_pair_str():
+def test_lonlat_pair_str_no_semicolon():
     with pytest.raises(ValueError, match="Format for line must be .*"):
         lonlat_pair_str('no-semicolon')
 
