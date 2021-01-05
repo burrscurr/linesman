@@ -2,21 +2,9 @@ import pytest
 import argparse
 import tempfile
 
-from gpxpy.gpx import GPX, GPXTrack, GPXTrackSegment, GPXTrackPoint, GPXXMLSyntaxException
+from gpxpy.gpx import GPX, GPXTrackPoint, GPXXMLSyntaxException
 
 from ..cli import lonlat_str, lonlat_pair_str, gpx_file, gpx_extract_points
-
-
-@pytest.fixture
-def gpx_obj():
-    gpx = GPX()
-    track = GPXTrack()
-    gpx.tracks.append(track)
-
-    segment = GPXTrackSegment()
-    track.segments.append(segment)
-
-    return gpx
 
 
 def test_lonlat_str_no_comma():
