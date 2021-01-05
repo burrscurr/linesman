@@ -24,12 +24,16 @@ linesman --help
 
 ## Usage
 
-`linesman` must be passed a gpx file with the recorded track and the start and
-end point of the reference line.
+`linesman` must be passed a gpx file with the recorded track, it should compare
+to a reference line:
 
 ```
-linesman <file.gpx> <lon_start,lat_start> <lon_end,lat_end>
+linesman path/to/file.gpx
 ```
+
+By default, the first and last point in the gpx file are used to derive the
+straight reference line from. If you want to specify the reference line
+explicitly, use the `--line` flag.
 
 Currently, three line quality measures are implemented: `max_m` (maximum
 deviation to the straight line in meters), `avg_m` (average deviation to the
@@ -38,7 +42,7 @@ the maximum deviation is being calculated. Different quality measures can be
 calculated with the `--using` flag:
 
 ```
-linesman <file.gpx> <lon_start,lat_start> <lon_end,lat_end> --using avg_m
+linesman <file.gpx> --using avg_m
 ```
 
 ## Development

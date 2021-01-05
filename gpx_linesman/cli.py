@@ -21,6 +21,15 @@ def lonlat_str(string):
     return lon, lat
 
 
+def lonlat_pair_str(string):
+    """:return: pair of two lon,lat points"""
+    if ';' not in string:
+        raise ValueError("Format for line must be 'start;end' (missing ';')!")
+
+    start, end = string.split(';', maxsplit=1)
+    return lonlat_str(start), lonlat_str(end)
+
+
 def gpx_file_points(value):
     """
     Extract the points of the first track of a gpx file.
@@ -57,7 +66,7 @@ def run():
     }
 
     parser = argparse.ArgumentParser(
-        description='Measure the deviation of a gpx track from a completely straigt line.'
+        description='Measure the deviation of a gpx track from a completely straight line.'
     )
     parser.add_argument(
         '--using', '-u', default='max_m', choices=('max_m', 'avg_m', 'avg_sq_m'),
@@ -68,15 +77,25 @@ def run():
         help='gpx file containing the GPS record that is an almost straight line'
     )
     parser.add_argument(
-        'linestart', type=lonlat_str, help='Start point of the straight line'
-    )
-    parser.add_argument(
-        'lineend', type=lonlat_str, help='End point of the straight line'
+        '--line', type=lonlat_pair_str,
+        help="Two points defining the reference line in format 'lon,lat;lon,lat'. " \
+            "Default: Line defined by first and last point of the gpx track."
     )
     args = parser.parse_args()
     
     MeasureClass = measures[args.using]
+    points = args.gpxfile
 
-    m = MeasureClass(args.gpxfile, args.linestart, args.lineend)
+    # define the reference line from the first/last point in the gpx file, if
+    # not explicitly defined with --line
+    if args.line:
+        point_a = args.line[0]
+        point_b = args.line[1]
+    else:
+        point_a = points[0]
+        point_b = points[-1]
+    if point_a == point_b:
+        raise ValueError('Points defining the line must differ!')
+
+    m = MeasureClass(args.gpxfile, point_a, point_b)
     print(msgs[args.using] + str(m.aggregate()))
-
