@@ -25,21 +25,21 @@ def gpx_file(gpx_obj):
 
 
 def test_cli_max_deviation(gpx_file, capsys):
-    sys.argv = ['linesman', gpx_file]
+    sys.argv = ['linesman', gpx_file, 'MAX']
     run()
     stdout, _ = capsys.readouterr()
     assert stdout.endswith('78433.68568649939\n')
 
 
 def test_cli_avg_deviation(gpx_file, capsys):
-    sys.argv = ['linesman', gpx_file, '--using=avg_m']
+    sys.argv = ['linesman', gpx_file, 'AVG']
     run()
     stdout, _ = capsys.readouterr()
     assert stdout.endswith('26144.561895499795\n')
 
 
 def test_cli_sq_avg_deviation(gpx_file, capsys):
-    sys.argv = ['linesman', gpx_file, '--using=avg_sq_m']
+    sys.argv = ['linesman', gpx_file, 'SQ-AVG']
     run()
     stdout, _ = capsys.readouterr()
     assert stdout.endswith('2050614350.1228597\n')

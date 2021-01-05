@@ -2,7 +2,14 @@ import argparse
 
 import gpxpy
 
-from .measure import MaxDeviation, AvgDeviation, AvgSquareDeviation
+from .measure import MaxDeviation, AvgDeviation, SquareDeviationAvg
+
+
+available_measures = {
+    'MAX': MaxDeviation,
+    'AVG': AvgDeviation,
+    'SQ-AVG': SquareDeviationAvg
+}
 
 
 def info(msg):
@@ -70,37 +77,35 @@ def gpx_extract_points(gpx_obj):
     return points
 
 
-def run():
-    measures = {
-        'max_m': MaxDeviation,
-        'avg_m': AvgDeviation,
-        'avg_sq_m': AvgSquareDeviation
-    }
-    msgs = {
-        'max_m': 'Maximum deviation in meters: ',
-        'avg_m': 'Average deviation in meters: ',
-        'avg_sq_m': 'Average squared deviation: ',
-    }
-
+def _argparser():
+    """:return: argument parser defining the command line interface"""
     parser = argparse.ArgumentParser(
-        description='Measure the deviation of a gpx track from a completely straight line.'
-    )
-    parser.add_argument(
-        '--using', '-u', default='max_m', choices=('max_m', 'avg_m', 'avg_sq_m'),
-        help='Line quality measure to calculate'
+        description='Measure the deviation of a ' \
+                    'gpx track from a completely straight line.'
     )
     parser.add_argument(
         'gpxfile', type=gpx_file,
-        help='gpx file containing the GPS record that is an almost straight line'
+        help='gpx file containing a GPS record to be compared to a straight line'
+    )
+    parser.add_argument(
+        'measure', choices=available_measures.keys(),
+        help="Quality measure to use. Available are maximum deviation in meters " \
+             "('MAX'), average deviation in meters ('AVG') and squared average " \
+             "deviation ('SQ-AVG')."
     )
     parser.add_argument(
         '--line', type=lonlat_pair_str,
         help="Two points defining the reference line in format 'lon,lat;lon,lat'. " \
             "Default: Line defined by first and last point of the gpx track."
     )
+    return parser
+
+
+def run():
+    parser = _argparser()
     args = parser.parse_args()
     
-    MeasureClass = measures[args.using]
+    Measure = available_measures[args.measure]
     try:
         points = gpx_extract_points(args.gpxfile)
     except ValueError as e:
@@ -117,5 +122,5 @@ def run():
     if point_a == point_b:
         abort('Points defining the line must not be equal!')
 
-    m = MeasureClass(points, point_a, point_b)
-    print(msgs[args.using] + str(m.aggregate()))
+    m = Measure(points, point_a, point_b)
+    print(f'{m.desc}: {m.aggregate()}')
