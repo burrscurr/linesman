@@ -1,15 +1,16 @@
 # linesman
 [![coverage](https://codecov.io/gh/burrscurr/linesman/branch/master/graph/badge.svg?token=LTDZFKEX4N)](https://codecov.io/gh/burrscurr/linesman)
 
-`linesman` is a small python command line tool calculating quality measures for the
-straightness of a gpx track. The project is inspired by the "I attempted to
-cross \<country\> in a completely straight line" series by the youtuber
+`linesman` is a small python command line tool calculating quality measures for
+the straightness of a gpx track. The project is inspired by the "I attempted to
+cross \<country\> in a completely straight line" series of youtuber
 [GeoWizard](https://www.youtube.com/channel/UCW5OrUZ4SeUYkUg1XqcjFYA).
 
 ## Installation
 
-As a python package, `linesman` is installed via pip (the package is named
-`gpx-linesman`):
+As a [python](https://python.org) package, `linesman` is installed [with
+pip](https://datatofish.com/install-package-python-using-pip/). The
+package is named `gpx-linesman`:
 
 ```
 pip install gpx-linesman
@@ -23,23 +24,22 @@ linesman --help
 
 ## Usage
 
-Currently, three deviation measures are implemented: `max_m` (maximum deviation
-to the straight line in meters), `avg_m` (average deviation to the straight line
-in meters) and `avg_sq_m` (average squared deviation).
-
-Without special arguments, the maximum deviation is being calculated:
+`linesman` must be passed a gpx file with the recorded track and the start and
+end point of the reference line.
 
 ```
 linesman <file.gpx> <lon_start,lat_start> <lon_end,lat_end>
 ```
 
-Calculating the average deviation:
+Currently, three line quality measures are implemented: `max_m` (maximum
+deviation to the straight line in meters), `avg_m` (average deviation to the
+straight line in meters) and `avg_sq_m` (average squared deviation). By default,
+the maximum deviation is being calculated. Different quality measures can be
+calculated with the `--using` flag:
 
 ```
 linesman <file.gpx> <lon_start,lat_start> <lon_end,lat_end> --using avg_m
 ```
-
-For an example gpx file, see [`examples/simple.gpx`](examples/simple.gpx).
 
 ## Development
 
