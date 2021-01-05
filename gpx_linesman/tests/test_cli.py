@@ -1,6 +1,22 @@
 import pytest
+import argparse
+import tempfile
 
-from ..cli import lonlat_str, lonlat_pair_str
+from gpxpy.gpx import GPX, GPXTrack, GPXTrackSegment, GPXTrackPoint, GPXXMLSyntaxException
+
+from ..cli import lonlat_str, lonlat_pair_str, gpx_file, gpx_extract_points
+
+
+@pytest.fixture
+def gpx_obj():
+    gpx = GPX()
+    track = GPXTrack()
+    gpx.tracks.append(track)
+
+    segment = GPXTrackSegment()
+    track.segments.append(segment)
+
+    return gpx
 
 
 def test_lonlat_str_no_comma():
@@ -26,3 +42,38 @@ def test_lonlat_pair_str():
 
 def test_lonlat_pair_str():
     assert lonlat_pair_str('1.2,-80;58.3,10.3') == ((1.2, -80), (58.3, 10.3))
+
+
+def test_gpx_file_no_readable_file():
+    with pytest.raises(argparse.ArgumentTypeError):
+        gpx_file('no readable gpx file')
+
+
+def test_gpx_file_invalid_gpx_syntax():
+    with pytest.raises(GPXXMLSyntaxException):
+        with tempfile.NamedTemporaryFile() as f:
+            gpx_file(f.name)
+
+
+def test_gpx_extract_points_no_tracks():
+    gpx = GPX()
+    with pytest.raises(ValueError, match='.*?at least one track.*'):
+        gpx_extract_points(gpx)
+
+
+def test_gpx_extract_points_to_few(gpx_obj):
+    segment = gpx_obj.tracks[0].segments[0]
+    segment.points.append(GPXTrackPoint(1, 1))
+
+    with pytest.raises(ValueError, match='.*?at least two points.*'):
+        points = gpx_extract_points(gpx_obj)
+
+
+def test_gpx_extract_points(gpx_obj):
+    segment = gpx_obj.tracks[0].segments[0]
+    segment.points.append(GPXTrackPoint(1, 1))
+    segment.points.append(GPXTrackPoint(2, 1))
+    segment.points.append(GPXTrackPoint(2, 2))
+
+    points = gpx_extract_points(gpx_obj)
+    assert points == [(1, 1), (1, 2), (2, 2)]

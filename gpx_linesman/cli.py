@@ -5,6 +5,15 @@ import gpxpy
 from .measure import MaxDeviation, AvgDeviation, AvgSquareDeviation
 
 
+def info(msg):
+    print('INFO : ' + msg, file=sys.stdout)
+
+
+def abort(msg):
+    print('ERROR: ' + msg, file=sys.stderr)
+    raise SystemExit(1)
+
+
 def lonlat_str(string):
     """:return: tuple of floats"""
     if ',' not in string:
@@ -30,26 +39,34 @@ def lonlat_pair_str(string):
     return lonlat_str(start), lonlat_str(end)
 
 
-def gpx_file_points(value):
+def gpx_file(path):
+    """:return: contents of gpx file parsed with gpxpy"""
+    file_tester = argparse.FileType('r')
+    gpxfile = file_tester(path)
+    return gpxpy.parse(gpxfile)
+
+
+def gpx_extract_points(gpx_obj):
     """
     Extract the points of the first track of a gpx file.
     :return: list of 2-tuples in (lon, lat) form
     """
-    file_tester = argparse.FileType('r')
-    gpxfile = file_tester(value)
-    
-    gpx = gpxpy.parse(gpxfile)
-    tracks = len(gpx.tracks)
+    tracks = len(gpx_obj.tracks)
     if tracks < 1:
-        raise ValueError('The gpx file does not contain any tracks.')
+        raise ValueError('The gpx file must contain at least one track!')
     elif tracks > 1:
-        raise UserWarning('gpx file has multiple tracks, defaulting to first one.')
+        info('gpx file has multiple tracks, defaulting to first one.')
 
     points = []
-    track = gpx.tracks[0]
+    track = gpx_obj.tracks[0]
     for segment in track.segments:
         for actual in segment.points:
             points.append((actual.longitude, actual.latitude))
+
+    if len(points) < 2:
+        msg = 'gpx file must have at least two points in the selected track!'
+        raise ValueError(msg)
+
     return points
 
 
@@ -73,7 +90,7 @@ def run():
         help='Line quality measure to calculate'
     )
     parser.add_argument(
-        'gpxfile', type=gpx_file_points,
+        'gpxfile', type=gpx_file,
         help='gpx file containing the GPS record that is an almost straight line'
     )
     parser.add_argument(
@@ -84,7 +101,10 @@ def run():
     args = parser.parse_args()
     
     MeasureClass = measures[args.using]
-    points = args.gpxfile
+    try:
+        points = gpx_extract_points(args.gpxfile)
+    except ValueError as e:
+        abort(str(e))
 
     # define the reference line from the first/last point in the gpx file, if
     # not explicitly defined with --line
@@ -95,7 +115,7 @@ def run():
         point_a = points[0]
         point_b = points[-1]
     if point_a == point_b:
-        raise ValueError('Points defining the line must differ!')
+        abort('Points defining the line must not be equal!')
 
-    m = MeasureClass(args.gpxfile, point_a, point_b)
+    m = MeasureClass(points, point_a, point_b)
     print(msgs[args.using] + str(m.aggregate()))
