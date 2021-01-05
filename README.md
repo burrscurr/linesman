@@ -50,5 +50,5 @@ poetry install
 ```
 
 Then, the CLI tool can be started with `poetry run linesman`. Run tests with
-`poetry run pytest`.
+`poetry run pytest`. Pass `--cov` flag to pytest to get a test coverage report.
 
