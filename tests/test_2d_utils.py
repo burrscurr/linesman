@@ -1,6 +1,6 @@
 import pytest
 
-from ..util import project
+from gpx_linesman.util import project
 
 
 def test_project_point_on_line():

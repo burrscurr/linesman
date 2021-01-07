@@ -6,7 +6,7 @@ import os
 from gpxpy.gpx import GPXTrackPoint
 
 
-from ..cli import run
+from gpx_linesman.cli import run
 
 
 @pytest.fixture
