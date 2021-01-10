@@ -1,0 +1,8 @@
+__pycache__
+
+# testing
+.pytest_cache
+.coverage
+
+# python package build
+dist/
