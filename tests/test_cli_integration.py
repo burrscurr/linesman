@@ -1,12 +1,11 @@
 import sys
 import tempfile
-import pytest
 import os
 
+import pytest
 from gpxpy.gpx import GPXTrackPoint
 
-
-from linesman.cli import run
+from linesman import run
 
 
 @pytest.fixture
