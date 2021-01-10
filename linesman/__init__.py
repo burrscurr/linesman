@@ -4,6 +4,14 @@ from .parse import lonlat_pair_str, gpx_file, gpx_extract_points
 from .measure import MaxDeviation, AvgDeviation, SquareDeviationAvg
 
 
+try:                         # python ^3.8
+    import importlib.metadata as importlib_metadata
+except ModuleNotFoundError:  # python <3.8
+    import importlib_metadata
+
+__version__ = importlib_metadata.version('gpx-linesman')
+
+
 available_measures = {
     'MAX': MaxDeviation,
     'AVG': AvgDeviation,
@@ -40,6 +48,10 @@ def _argparser():
         '--line', type=lonlat_pair_str,
         help="Two points defining the reference line in format 'lon,lat;lon,lat'. " \
             "Default: Line defined by first and last point of the gpx track."
+    )
+    parser.add_argument(
+        '--version', action='version', version=__version__,
+        help='Print linesman version and exit.'
     )
     return parser
 
