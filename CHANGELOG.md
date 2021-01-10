@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 0.2.1
+
+ - Use `linesman` instead of `gpx_linesman` as python package name (this does
+   not change the name used for `pip install`, which remains `gpx-linesman`.
+
 ## 0.2.0
 
  - Replace `linestart` and `lineend` arguments defining the straight line with a

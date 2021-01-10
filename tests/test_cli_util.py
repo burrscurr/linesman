@@ -4,7 +4,7 @@ import tempfile
 
 from gpxpy.gpx import GPX, GPXTrackPoint, GPXXMLSyntaxException
 
-from gpx_linesman.cli import lonlat_str, lonlat_pair_str, gpx_file, gpx_extract_points
+from linesman.cli import lonlat_str, lonlat_pair_str, gpx_file, gpx_extract_points
 
 
 def test_lonlat_str_no_comma():
