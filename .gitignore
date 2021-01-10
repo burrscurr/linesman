@@ -1,0 +1,9 @@
+__pycache__
+
+# testing
+.pytest_cache
+.coverage
+
+# python package build/install
+dist/
+gpx_linesman.egg-info
