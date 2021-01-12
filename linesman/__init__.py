@@ -50,7 +50,7 @@ def _argparser():
             "Default: Line defined by first and last point of the gpx track."
     )
     parser.add_argument(
-        '--version', action='version', version=__version__,
+        '-V', '--version', action='version', version=__version__,
         help='Print linesman version and exit.'
     )
     return parser
