@@ -23,6 +23,14 @@ def gpx_file(gpx_obj):
     os.remove(f.name)
 
 
+def test_cli_explicit_line(gpx_file, capsys):
+    refline = '1,1;2,2'
+    sys.argv = ['linesman', gpx_file, 'MAX', '--line', refline]
+    run()
+    stdout, _ = capsys.readouterr()
+    assert stdout.endswith('78433.68568649939\n')
+
+
 def test_cli_max_deviation(gpx_file, capsys):
     sys.argv = ['linesman', gpx_file, 'MAX']
     run()
