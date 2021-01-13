@@ -1,7 +1,7 @@
 
 from geopy.distance import geodesic, lonlat
 
-from .util import project
+from .util import Vector, Line
 
 
 
@@ -9,22 +9,19 @@ class Measure:
     """Abstract base class evaluating a sequence of points to a straight line."""
     desc = None  # description of the value aggregated by this measure
 
-    def __init__(self, points, line_start, line_end):
+    def __init__(self, points: [Vector], refline: Line):
         """
-        :param points: iterable of (x,y) tuples representing points
-        :param line_start: (x,y) tuple marking the line start
-        :param line_end: (x,y) tuple marking the line end
+        :param points: list of Vector(lon,lat) instances representing the gps track
+        :param refline: line to compare the points to
         """
         # measure the deviation of each point to its projection onto the
         # straight line
         self.measures = [
-            self.measure_deviation(
-                project(line_start, line_end, point),
-                point
-            ) for point in points
+            self.measure_deviation(refline.project(point), point)
+                for point in points
         ]
 
-    def measure_deviation(self, point, actual):
+    def measure_deviation(self, point: Vector, actual: Vector):
         """:return: deviation of a point on the line to an gps point"""
         raise NotImplementedError()
 
@@ -41,8 +38,8 @@ class MeterDeviation(Measure):
     critical measure.
     """
     def measure_deviation(self, point, actual):
-        point = lonlat(*point)
-        actual = lonlat(*actual)
+        point = lonlat(point.x, point.y)
+        actual = lonlat(actual.x, actual.y)
         return 1000*geodesic(point, actual).km
 
 

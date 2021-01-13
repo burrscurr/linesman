@@ -2,6 +2,7 @@ import argparse
 
 from .parse import lonlat_pair_str, gpx_file, gpx_extract_points
 from .measure import MaxDeviation, AvgDeviation, SquareDeviationAvg
+from .util import Line
 
 
 try:                         # python ^3.8
@@ -68,14 +69,11 @@ def run():
 
     # define the reference line from the first/last point in the gpx file, if
     # not explicitly defined with --line
-    if args.line:
-        point_a = args.line[0]
-        point_b = args.line[1]
-    else:
-        point_a = points[0]
-        point_b = points[-1]
-    if point_a == point_b:
-        abort('Points defining the line must not be equal!')
+    if not args.line:
+        try:
+            args.line = Line(points[0], points[-1])
+        except ValueError as e:
+            abort(str(e))
 
-    m = Measure(points, point_a, point_b)
+    m = Measure(points, args.line)
     print(f'{m.desc}: {m.aggregate()}')
