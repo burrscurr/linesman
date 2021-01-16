@@ -49,5 +49,11 @@ Scope of this documentation
 This documentation mainly focuses on central concepts of linesman. For
 user-oriented documentation, use the built-in help.
 
+.. toctree::
+  :caption: Concepts
+  :maxdepth: 1
+
+  straightness
+
 .. _geowizard: https://www.youtube.com/c/GeoWizard
 .. _github: https://github.com/burrscurr/linesman
