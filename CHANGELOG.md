@@ -5,7 +5,8 @@
 
  - Use `linesman` instead of `gpx_linesman` as python package name (this does
    not change the name used for `pip install`, which remains `gpx-linesman`.
- - Add `--version` flag printing linesman's version.
+ - Add `--version`/`-V` flag printing linesman's version.
+ - Add documentation (served on readthedocs)
 
 ## 0.2.0
 
