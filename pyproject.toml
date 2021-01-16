@@ -12,6 +12,7 @@ repository = "https://github.com/burrscurr/linesman.git"
 documentation = "https://linesman.readthedocs.io"
 classifiers = [
     "Operating System :: OS Independent",
+    "Environment :: Console",
     "Topic :: Scientific/Engineering :: GIS"
 ]
 
