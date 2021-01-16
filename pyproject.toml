@@ -8,6 +8,12 @@ description = "Command line tool for measuring the straightness of a gpx track"
 authors = ["burrscurr <burrscurr@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/burrscurr/linesman.git"
+documentation = "https://linesman.readthedocs.io"
+classifiers = [
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: GIS"
+]
 
 [tool.poetry.dependencies]
 python = "^3.6"
