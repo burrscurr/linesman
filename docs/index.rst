@@ -1,10 +1,5 @@
-.. linesman documentation master file, created by
-   sphinx-quickstart on Thu Jan  7 20:50:58 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-linesman
-========
+linesman documentation
+======================
 
 linesman is a command line tool calculating quality measures evaluating the
 straightness of a GPS track.
@@ -32,7 +27,8 @@ Motivation
 
 linesman is inspired by `geowizard`_, a youtuber who popularized crossing
 areas in a completely straight line. While overcoming natural and/or man-made
-obstacles, one attempts sticking as closely to the predefined line as possible.
+obstacles, one attempts sticking as closely as possible to the straight,
+predefined line.
 
 Commonly, a straight line mission is judged by the maximum deviation from the
 reference line. Especially with longer straight line missions, determining the
@@ -54,6 +50,7 @@ user-oriented documentation, use the built-in help.
   :maxdepth: 1
 
   straightness
+  track
 
 .. _geowizard: https://www.youtube.com/c/GeoWizard
 .. _github: https://github.com/burrscurr/linesman
