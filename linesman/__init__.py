@@ -2,7 +2,7 @@ import argparse
 
 from .parse import lonlat_pair_str, gpx_file, gpx_extract_points
 from .measure import MaxDeviation, AvgDeviation, SquareDeviationAvg
-from .util import Line
+from .geometry import Line
 
 
 try:                         # python ^3.8

@@ -1,6 +1,6 @@
 from geographiclib.geodesic import Geodesic
 
-from .util import Vector, Line
+from .geometry import Vector, Line
 
 
 def distance_m(a: Vector, b: Vector):
