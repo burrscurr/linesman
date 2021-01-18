@@ -75,5 +75,5 @@ def run():
         except ValueError as e:
             abort(str(e))
 
-    m = Measure(points, args.line)
+    m = Measure(points, args.line, resample=False, spherical=False)
     print(f'{m.desc}: {m.aggregate()}')
