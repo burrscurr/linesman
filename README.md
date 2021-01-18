@@ -1,5 +1,5 @@
 # linesman
-[![coverage](https://codecov.io/gh/burrscurr/linesman/branch/master/graph/badge.svg?token=LTDZFKEX4N)](https://codecov.io/gh/burrscurr/linesman)
+[![test coverage](https://coveralls.io/repos/github/burrscurr/linesman/badge.svg)](https://coveralls.io/github/burrscurr/linesman)
 [![Documentation Status](https://readthedocs.org/projects/linesman/badge/?version=latest)](https://linesman.readthedocs.io/en/latest/?badge=latest)
 
 `linesman` is a small python command line tool calculating quality measures for
@@ -48,7 +48,7 @@ poetry install
 ```
 
 Then, the CLI tool can be started with `poetry run linesman`. Run tests with
-`poetry run pytest`. Pass `--cov` flag to pytest to get a test coverage report.
+`poetry run pytest`.
 
 ## Documentation
 
