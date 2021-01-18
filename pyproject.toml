@@ -11,9 +11,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-geopy = "^2.0.0"
 gpxpy = "^1.4.2"
 importlib-metadata = {version = "^1.0", python = "<3.8"}
+geographiclib = "^1.50"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.1"

@@ -1,8 +1,6 @@
-
-from geopy.distance import geodesic, lonlat
+from geographiclib.geodesic import Geodesic
 
 from .util import Vector, Line
-
 
 
 class Measure:
@@ -34,13 +32,14 @@ class Measure:
 
 class MeterDeviation(Measure):
     """
-    Scoring method using the deviation of points from the line in meters as
-    critical measure.
+    Interpret the given points as latitude/longitude in WGS84 and return their
+    distance in meters.
     """
     def measure_deviation(self, point, actual):
-        point = lonlat(point.x, point.y)
-        actual = lonlat(actual.x, actual.y)
-        return 1000*geodesic(point, actual).km
+        res = Geodesic.WGS84.Inverse(
+            point.y, point.x, actual.y, actual.x, Geodesic.DISTANCE)
+        distance_m = res['s12']
+        return distance_m
 
 
 class MaxDeviation(MeterDeviation):
