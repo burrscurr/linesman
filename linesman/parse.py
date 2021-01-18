@@ -2,7 +2,7 @@ import argparse
 
 import gpxpy
 
-from .util import Vector, Line
+from .geometry import Vector, Line
 
 
 def lonlat_str(string):
