@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from .parse import lonlat_pair_str, gpx_file, gpx_extract_points
 from .measure import MaxDeviation, AvgDeviation, SquareDeviationAvg
@@ -57,7 +58,11 @@ def _argparser():
     return parser
 
 
-def run():
+def get_evaluation_measure():
+    """
+    :return: Measure instance configured according to the command line
+    parameters
+    """
     parser = _argparser()
     args = parser.parse_args()
 
@@ -72,8 +77,11 @@ def run():
     if not args.line:
         try:
             args.line = Line(points[0], points[-1])
-        except ValueError as e:
+        except ValueError as e:  # may happen if both points are equal
             abort(str(e))
+    return Measure(points, args.line, resample=False, loxodrome=True)
 
-    m = Measure(points, args.line, resample=False, spherical=False)
+
+def run():
+    m = get_evaluation_measure()
     print(f'{m.desc}: {m.aggregate()}')
