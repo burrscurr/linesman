@@ -19,11 +19,8 @@ class Line(StraightLine):
         return Line(self._p1 + vec, self._p2 + vec)
 
     def project(self, point: Vector):
-        # move line and argument such that both start in (0, 0)
-        origin_line = self.move(-self._p1)
-        span = origin_line._p2 - origin_line._p1
-        point = point - self._p1
-        return ((point*span)/(span*span))*span + self._p1
+        line = self._p2 - self._p1
+        return self._p1 + ((point - self._p1)*line/(line*line))*line
 
     def orthogonal_line(self, through: Vector):
         span = self._p2 - self._p1

@@ -72,16 +72,15 @@ def get_evaluation_measure():
     except ValueError as e:
         abort(str(e))
 
-    # define the reference line from the first/last point in the gpx file, if
-    # not explicitly defined with --line
+    # if not explicitly given, let first/last point define the reference line
     if not args.line:
         try:
             args.line = Line(points[0], points[-1])
         except ValueError as e:  # may happen if both points are equal
             abort(str(e))
-    return Measure(points, args.line, resample=False, loxodrome=True)
+    return Measure(points, args.line, resample=False)
 
 
 def run():
     m = get_evaluation_measure()
-    print(f'{m.desc}: {m.aggregate()}')
+    print(f'{m.desc}: {m.calculate()}')

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3
+
+Linesman uses a geodesic as reference line by default now. Previous versions
+have used a loxodrome.
 
 ## 0.2.1
 
@@ -19,4 +23,3 @@
 ## 0.1.2
 
 Initial version.
-

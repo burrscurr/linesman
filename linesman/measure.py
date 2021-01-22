@@ -1,19 +1,5 @@
-from geographiclib.geodesic import Geodesic
-
+from .geo import mercator_project, azimuth
 from .geometry import Vector, Line
-
-
-def distance_m(a: Vector, b: Vector):
-    """
-    Solve the inverse problem for two points on the WGS84 ellipsoid.
-    :param a: (longitude, latitude) point
-    :param b: (longitude, latitude) point
-    :return: distance in meters between a and b
-    """
-    res = Geodesic.WGS84.Inverse(
-        a.y, a.x, b.y, b.x, Geodesic.DISTANCE)
-    distance_m = res['s12']
-    return distance_m
 
 
 class Measure:
@@ -22,8 +8,7 @@ class Measure:
     """
     desc = None  # description of the value aggregated by this measure
 
-    def __init__(self, points: [Vector], refline: Line, resample=True,
-            spherical=True):
+    def __init__(self, points: [Vector], refline: Line, resample=True):
         """
         :param points: list of Vector(lon,lat) instances representing the gps
         track
@@ -31,76 +16,61 @@ class Measure:
         :param resample: Whether to resample the recorded track from equidistant
         points on the reference line (default). If False, the recorded track
         points are compared to their projections on the reference line.
-        :param spherical: Whether spherical geometry should be used. If False,
-        the reference line is interpreted as a loxodrome rather than a geodesic.
         """
-        self.spherical = spherical
         self.resample = resample
-        self.points = self._select_points(points, refline)
 
-        self.distances = [
-            self.measure_distance(a, b) for a, b in self.points
-        ]
+        self.points = list(self._to_meter_grid(points, refline))
 
-    def _select_points(self, points, refline):
+    def _to_meter_grid(self, points: [Vector], refline: Line):
         """
-        :return: the pairs of points to compare to evaluate the recorded track
+        Transform the given (lon, lat) points such that the reference line is
+        on the x axis and the y coordinate of a point being its shortest
+        distance from the reference line. The unit of the resulting cartesian
+        grid is 1 Meter.
+        After this transformation, each point's deviation is its y coordinate.
+        :param points: iterable of (lon, lat) Vector instances to transform
+        :param refline: Line instance that becomes the new x axis
+        :return: iterable of transformed points
         """
-        if not self.resample:
-            if self.spherical:
-                # that's not trivial.
-                raise NotImplementedError
-            else:
-                pairs = [(refline.project(p), p) for p in points]
-        else:
-            if self.spherical:
-                raise NotImplementedError
-            else:
-                raise NotImplementedError
-        return pairs
+        start = refline.point(0)
+        end = refline.point(1)
+        return mercator_project(start, azimuth(start, end), points)
 
-    def measure_distance(self, a: Vector, b: Vector):
-        """:return: distance between two points"""
-        raise NotImplementedError()
-
-    def aggregate(self):
+    def calculate(self):
         """
-        :return: aggregation of all distances (e.g. the maximum or an average)
+        :return: result of the measure (e.g. maximum or an average)
         """
         raise NotImplementedError()
 
 
-class MeterDeviation(Measure):
-    """
-    Interpret the given points as latitude/longitude in WGS84 and return their
-    distance in meters.
-    """
-    def measure_distance(self, a, b):
-        return distance_m(a, b)
+class AbsoluteDeviationMeasure(Measure):
+    """Deviation measure considering the absolute deviation."""
+    def _absolute_deviations(self):
+        return [abs(p.y) for p in self.points]
 
 
-class MaxDeviation(MeterDeviation):
+class MaxDeviation(AbsoluteDeviationMeasure):
     """Maximum deviation from the line in meters."""
     desc = 'Maximum deviation in meters'
 
-    def aggregate(self):
-        return max(self.distances)
+    def calculate(self):
+        return max(self._absolute_deviations())
 
 
-class AvgDeviation(MeterDeviation):
+class AvgDeviation(AbsoluteDeviationMeasure):
     """Average deviation from the line in meters."""
     desc = 'Average deviation in meters'
 
-    def aggregate(self):
-        return sum(self.distances)/len(self.distances)
+    def calculate(self):
+        return sum(self._absolute_deviations())/len(self.points)
 
 
-class SquareDeviationAvg(MeterDeviation):
+class SquareDeviationAvg(Measure):
     """
     Average squared deviation from the line in meters^2.
     This measure punishes bigger distances more than small ones.
     """
     desc = 'Average squared deviation'
 
-    def aggregate(self):
-        return sum(map(lambda x: x**2, self.distances))/len(self.distances)
+    def calculate(self):
+        return sum([p.y**2 for p in self.points])/len(self.points)

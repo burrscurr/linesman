@@ -5,6 +5,8 @@ import os
 import pytest
 from gpxpy.gpx import GPXTrackPoint
 
+from linesman.geometry import Vector
+from linesman.geo import dist_m
 from linesman import run, get_evaluation_measure
 
 
@@ -52,7 +54,7 @@ def test_explicit_line(gpx_file):
     refline = '1,1;2,3'
     sys.argv = ['linesman', gpx_file, 'MAX', '--line', refline]
     m = get_evaluation_measure()
-    assert m.calculate() == 49695.425252590474
+    assert abs(m.calculate()/49695.425252590474 - 1) < 0.001
 
 
 def test_invalid_gpx_file(gpx_obj):
@@ -68,19 +70,20 @@ def test_invalid_gpx_file(gpx_obj):
     os.remove(f.name)
 
 
-def test_max_deviation(gpx_file):
+def test_measures(gpx_file):
+    # the maximum deviation is just from the (2, 1) point, which can be
+    # approximated with planar lon/lat geometry (we are close to the equator)
+    deviation = dist_m(Vector(1.5, 1.5), Vector(2, 1))
+    MAX_REL_DIFF = 0.001
+
     sys.argv = ['linesman', gpx_file, 'MAX']
     m = get_evaluation_measure()
-    assert m.calculate() == 78433.68568649939
+    assert abs(m.calculate()/deviation - 1) < MAX_REL_DIFF
 
-
-def test_avg_deviation(gpx_file):
     sys.argv = ['linesman', gpx_file, 'AVG']
     m = get_evaluation_measure()
-    assert m.calculate() == 26144.561895499795
+    assert abs(m.calculate()/(deviation/3) - 1) < MAX_REL_DIFF
 
-
-def test_sq_avg_deviation(gpx_file):
     sys.argv = ['linesman', gpx_file, 'SQ-AVG']
     m = get_evaluation_measure()
-    assert m.calculate() == 2050614350.1228597
+    assert abs(m.calculate()/(deviation**2/3) - 1) < MAX_REL_DIFF
