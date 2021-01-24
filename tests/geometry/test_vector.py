@@ -28,34 +28,6 @@ def test_length():
     assert v2.length() == 0
 
 
-def test_orthogonal_vector_nullvector():
-    v = Vector(0, 0)
-    assert v.orthogonal_vector() == Vector(0, 0)
-
-
-def test_orthogonal_vector_on_axis():
-    v = Vector(4, 0)
-    assert v.orthogonal_vector() * v == 0
-
-
-def test_orthogonal_vector():
-    v = Vector(-2, 5)
-    assert v.orthogonal_vector() * v == 0
-
-
-def test_parallel():
-    v1 = Vector(-2, 5)
-    v2 = Vector(1, -2.5)
-    assert v1.parallel_to(v2)
-    assert v2.parallel_to(v1)
-
-
-def test_parallel_practically_parallel(minimal):
-    v1 = Vector(-2, 5)
-    assert v1.parallel_to(v1 + minimal)
-    assert (v1 + minimal).parallel_to(v1)
-
-
 def test_vector_product():
     v1 = Vector(-3, 2.5)
     v2 = Vector(2, 5)

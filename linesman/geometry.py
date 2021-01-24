@@ -1,6 +1,4 @@
 import math
-import abc
-
 
 # Floating point operations are prone to rounding error. For equality operations,
 # consider values equal when they are differing less than EPSILON.
@@ -23,10 +21,6 @@ class Vector:
 
     def length(self):
         return math.sqrt(self.x**2 + self.y**2)
-
-    def orthogonal_vector(self):
-        """:return: Vector orthogonal to self"""
-        return Vector(self.y, -self.x)
 
     def parallel_to(self, other):
         """
@@ -70,23 +64,13 @@ class Vector:
         return str(self)
 
 
-class StraightLine(abc.ABC):
-    """
-    Abstract base class for the line through two points that is the shortest
-    path between both points.
-    There are implementations with planar and spherical geometry. Instances of
-    the subclasses should not be mixed in use. However, the interface makes
-    switching between both interpretations easier.
-    """
+class Line:
+    """Class for a line in a 2-dimensional space. Instances are immutable."""
     def __init__(self, a: Vector, b: Vector):
         if a == b:
             raise ValueError('Line cannot be defined by one point')
         self._p1 = a
         self._p2 = b
-
-    def __contains__(self, other: Vector):
-        """:return: whether the line contains a certain point"""
-        raise NotImplementedError
 
     def __eq__(self, other):
         """:return: whether all points described by self are also on other"""
@@ -94,31 +78,20 @@ class StraightLine(abc.ABC):
             return NotImplemented
         return other.point(0) in self and other.point(1) in self
 
+    def __contains__(self, other: Vector):
+        other = other - self._p1
+        return self.direction.parallel_to(other)
+
     def __repr__(self):
         return f'Line({self._p1}, {self._p2})'
+
+    @property
+    def direction(self):
+        return self._p2 - self._p1
 
     def point(self, factor=0):
         """
         :return: point on the line based on the first initialization
         point added to the factor-th of the direction of the line.
         """
-        raise NotImplementedError
-
-    def project(self, point: Vector):
-        """
-        :return: projection of given point onto the line such that the distance
-        between the original point and the projected point is minimal.
-        """
-        raise NotImplementedError
-
-    def orthogonal(self, through: Vector):
-        """:return: line orthogonal to self and through the given point"""
-        raise NotImplementedError
-
-    def intersection(self, other):
-        """
-        :param other: instance of StraightLine of identical type like self
-        :return: intersection point of self and other or None if both lines
-        don't intersect or self if both lines share an infinite number of points
-        """
-        raise NotImplementedError
+        return self._p1 + factor*self.direction
