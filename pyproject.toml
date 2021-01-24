@@ -3,7 +3,7 @@ name = "gpx-linesman"
 packages = [
     { include = "linesman" }
 ]
-version = "0.2.1"
+version = "0.3.0"
 description = "Command line tool for measuring the straightness of a gpx track"
 authors = ["burrscurr <burrscurr@users.noreply.github.com>"]
 license = "MIT"
