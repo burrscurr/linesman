@@ -1,13 +1,13 @@
+import os
 import sys
 import tempfile
-import os
 
 import pytest
-from gpxpy.gpx import GPXTrackPoint
+from gpxpy.gpx import GPXTrackPoint, GPXTrack, GPX, GPXTrackSegment
 
-from linesman.geometry import Vector
+from linesman import get_evaluation_measure
 from linesman.geo import dist_m
-from linesman import run, get_evaluation_measure
+from linesman.geometry import Vector
 
 
 @pytest.fixture
@@ -51,7 +51,7 @@ def test_implicit_line_invalid(gpx_obj):
 
 
 def test_explicit_line(gpx_file):
-    refline = '1,1;2,3'
+    refline = '1,1;3,2'
     sys.argv = ['linesman', gpx_file, 'MAX', '--line', refline]
     m = get_evaluation_measure()
     assert abs(m.calculate()/49695.425252590474 - 1) < 0.001
@@ -66,7 +66,30 @@ def test_invalid_gpx_file(gpx_obj):
 
     sys.argv = ['linesman', f.name, 'MAX']
     with pytest.raises(SystemExit):
-        m = get_evaluation_measure()
+        get_evaluation_measure()
+    os.remove(f.name)
+
+
+def test_warn_multiple_tracks(capsys):
+    gpx = GPX()
+    track1 = GPXTrack()  # the first track needs at least 2 points to be valid
+    segment = GPXTrackSegment()
+    segment.points.append(GPXTrackPoint(1, 1))
+    segment.points.append(GPXTrackPoint(2, 1))
+    track1.segments.append(segment)
+    track2 = GPXTrack()
+    gpx.tracks.append(track1)
+    gpx.tracks.append(track2)
+    f = tempfile.NamedTemporaryFile('w', encoding='utf-8', delete=False)
+    f.write(gpx.to_xml())
+    f.close()
+
+    sys.argv = ['linesman', f.name, 'MAX']
+    m = get_evaluation_measure()
+    output = capsys.readouterr()
+    assert 'Warning' in output.out
+    assert 'multiple tracks, defaulting to first one' in output.out
+
     os.remove(f.name)
 
 
