@@ -1,10 +1,9 @@
 import argparse
-import sys
 
-from .parse import latlon_pair_str, gpx_file, gpx_extract_points
-from .measure import MaxDeviation, AvgDeviation, SquareDeviationAvg
 from .geometry import Line
-
+from .measure import MaxDeviation, AvgDeviation, SquareDeviationAvg
+from .output import abort
+from .parse import latlon_pair_str, gpx_file, gpx_extract_points
 
 try:                         # python ^3.8
     import importlib.metadata as importlib_metadata
@@ -19,15 +18,6 @@ available_measures = {
     'AVG': AvgDeviation,
     'SQ-AVG': SquareDeviationAvg
 }
-
-
-def info(msg):
-    print('INFO : ' + msg, file=sys.stdout)
-
-
-def abort(msg):
-    print('ERROR: ' + msg, file=sys.stderr)
-    raise SystemExit(1)
 
 
 def _argparser():

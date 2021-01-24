@@ -3,6 +3,7 @@ import argparse
 import gpxpy
 
 from .geometry import Vector, Line
+from .output import warn
 
 
 def latlon_str(string):
@@ -46,7 +47,7 @@ def gpx_extract_points(gpx_obj):
     if tracks < 1:
         raise ValueError('The gpx file must contain at least one track!')
     elif tracks > 1:
-        info('gpx file has multiple tracks, defaulting to first one.')
+        warn('gpx file has multiple tracks, defaulting to first one.')
 
     points = []
     track = gpx_obj.tracks[0]
