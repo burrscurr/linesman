@@ -1,5 +1,5 @@
 [run]
-source = gpx_linesman
+source = linesman
 
 [report]
 omit = */tests/*
