@@ -2,8 +2,9 @@
 
 ## 0.3
 
-Linesman uses a geodesic as reference line by default now. Previous versions
-have used a loxodrome.
+ - Linesman uses a geodesic as reference line by default now. Previous versions
+   have used a loxodrome.
+ - Change `--line` argument to use format `lat,lon` instead of `lon,lat`
 
 ## 0.2.1
 

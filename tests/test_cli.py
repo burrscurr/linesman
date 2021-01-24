@@ -51,7 +51,7 @@ def test_implicit_line_invalid(gpx_obj):
 
 
 def test_explicit_line(gpx_file):
-    refline = '1,1;2,3'
+    refline = '1,1;3,2'
     sys.argv = ['linesman', gpx_file, 'MAX', '--line', refline]
     m = get_evaluation_measure()
     assert abs(m.calculate()/49695.425252590474 - 1) < 0.001

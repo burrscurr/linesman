@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from .parse import lonlat_pair_str, gpx_file, gpx_extract_points
+from .parse import latlon_pair_str, gpx_file, gpx_extract_points
 from .measure import MaxDeviation, AvgDeviation, SquareDeviationAvg
 from .geometry import Line
 
@@ -33,7 +33,7 @@ def abort(msg):
 def _argparser():
     """:return: argument parser defining the command line interface"""
     parser = argparse.ArgumentParser(
-        description='Measure the deviation of a ' \
+        description='Measure the deviation of a '
                     'gpx track from a completely straight line.'
     )
     parser.add_argument(
@@ -42,14 +42,14 @@ def _argparser():
     )
     parser.add_argument(
         'measure', choices=available_measures.keys(),
-        help="Quality measure to use. Available are maximum deviation in meters " \
-             "('MAX'), average deviation in meters ('AVG') and squared average " \
+        help="Quality measure to use. Available are maximum deviation in meters "
+             "('MAX'), average deviation in meters ('AVG') and squared average "
              "deviation ('SQ-AVG')."
     )
     parser.add_argument(
-        '--line', type=lonlat_pair_str,
-        help="Two points defining the reference line in format 'lon,lat;lon,lat'. " \
-            "Default: Line defined by first and last point of the gpx track."
+        '--line', type=latlon_pair_str,
+        help="Two points defining the reference line in format 'lat,lon;lat,lon'. "
+             "Default: Line defined by first and last point of the gpx track."
     )
     parser.add_argument(
         '-V', '--version', action='version', version=__version__,

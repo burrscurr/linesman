@@ -1,13 +1,13 @@
-import pytest
 import argparse
+import os
 import tempfile
 import uuid
-import os
 
+import pytest
 from gpxpy.gpx import GPX, GPXTrackPoint, GPXXMLSyntaxException
 
-from linesman.parse import lonlat_str, lonlat_pair_str, gpx_file, gpx_extract_points
-from linesman.geometry import Vector, Line
+from linesman.geometry import Vector
+from linesman.parse import latlon_str, latlon_pair_str, gpx_file, gpx_extract_points
 
 
 @pytest.fixture
@@ -19,29 +19,29 @@ def temp_file_path():
     os.remove(path)
 
 
-def test_lonlat_str_no_comma():
-    with pytest.raises(ValueError, match=".* must be 'lon,lat'.*"):
-        lonlat_str('nocomma')
+def test_latlon_str_no_comma():
+    with pytest.raises(ValueError, match=".* must be 'lat,lon'.*"):
+        latlon_str('nocomma')
 
 
-def test_lonlat_str_no_float():
+def test_latlon_str_no_float():
     with pytest.raises(ValueError, match="lon .*? is no valid floating point number.*"):
-        lonlat_str('5x,48.000945')
+        latlon_str('48.000945,any')
     with pytest.raises(ValueError, match="lat .*? is no valid floating point number.*"):
-        lonlat_str('48.000945,any')
+        latlon_str('5x,48.000945')
 
 
-def test_lonlat_str():
-    assert lonlat_str('5.2,4.3') == Vector(5.2, 4.3)
+def test_latlon_str():
+    assert latlon_str('4.3,5.2') == Vector(5.2, 4.3)
 
 
-def test_lonlat_pair_str_no_semicolon():
+def test_latlon_pair_str_no_semicolon():
     with pytest.raises(ValueError, match="Format for line must be .*"):
-        lonlat_pair_str('no-semicolon')
+        latlon_pair_str('no-semicolon')
 
 
-def test_lonlat_pair_str():
-    line = lonlat_pair_str('1.2,-80;58.3,10.3')
+def test_latlon_pair_str():
+    line = latlon_pair_str('-80,1.2;10.3,58.3')
     assert line._p1 == Vector(1.2, -80)
     assert line._p2 == Vector(58.3, 10.3)
 
