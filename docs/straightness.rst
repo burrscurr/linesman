@@ -42,11 +42,7 @@ context of the expected devatiations of a straight line mission, `this map
 Linesman's understanding of a straight line
 -------------------------------------------
 
-Currently, linesman is not aware of the spherical nature of earth's surface.
-Therefore, all calculations are performed in a cartesian grid of latitude and
-longitude.
-
-However, it is planned to implement spherical geometry such that linesman can be
-told to use spherical instead of planar geometry.
+By default, linesman always uses a geodesic as reference line. Using a loxodrome
+as reference line might be implemented in a future release.
 
 .. _mercator projection: https://en.wikipedia.org/wiki/Mercator_projection

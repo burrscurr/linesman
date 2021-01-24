@@ -7,6 +7,7 @@ import os
 from gpxpy.gpx import GPX, GPXTrackPoint, GPXXMLSyntaxException
 
 from linesman.parse import lonlat_str, lonlat_pair_str, gpx_file, gpx_extract_points
+from linesman.geometry import Vector, Line
 
 
 @pytest.fixture
@@ -31,7 +32,7 @@ def test_lonlat_str_no_float():
 
 
 def test_lonlat_str():
-    assert lonlat_str('5.2,4.3') == (5.2, 4.3)
+    assert lonlat_str('5.2,4.3') == Vector(5.2, 4.3)
 
 
 def test_lonlat_pair_str_no_semicolon():
@@ -40,7 +41,9 @@ def test_lonlat_pair_str_no_semicolon():
 
 
 def test_lonlat_pair_str():
-    assert lonlat_pair_str('1.2,-80;58.3,10.3') == ((1.2, -80), (58.3, 10.3))
+    line = lonlat_pair_str('1.2,-80;58.3,10.3')
+    assert line._p1 == Vector(1.2, -80)
+    assert line._p2 == Vector(58.3, 10.3)
 
 
 def test_gpx_file_no_readable_file():
@@ -74,4 +77,4 @@ def test_gpx_extract_points(gpx_obj):
     segment.points.append(GPXTrackPoint(2, 2))
 
     points = gpx_extract_points(gpx_obj)
-    assert points == [(1, 1), (1, 2), (2, 2)]
+    assert points == [Vector(1, 1), Vector(1, 2), Vector(2, 2)]

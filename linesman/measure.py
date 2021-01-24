@@ -1,74 +1,76 @@
-
-from geopy.distance import geodesic, lonlat
-
-from .util import project
-
+from .geo import mercator_project, azimuth
+from .geometry import Vector, Line
 
 
 class Measure:
-    """Abstract base class evaluating a sequence of points to a straight line."""
+    """
+    Abstract base class for measuring a sequence of points to a reference line.
+    """
     desc = None  # description of the value aggregated by this measure
 
-    def __init__(self, points, line_start, line_end):
+    def __init__(self, points: [Vector], refline: Line, resample=True):
         """
-        :param points: iterable of (x,y) tuples representing points
-        :param line_start: (x,y) tuple marking the line start
-        :param line_end: (x,y) tuple marking the line end
+        :param points: list of Vector(lon,lat) instances representing the gps
+        track
+        :param refline: line to compare the points to
+        :param resample: Whether to resample the recorded track from equidistant
+        points on the reference line (default). If False, the recorded track
+        points are compared to their projections on the reference line.
         """
-        # measure the deviation of each point to its projection onto the
-        # straight line
-        self.measures = [
-            self.measure_deviation(
-                project(line_start, line_end, point),
-                point
-            ) for point in points
-        ]
+        self.resample = resample
 
-    def measure_deviation(self, point, actual):
-        """:return: deviation of a point on the line to an gps point"""
+        self.points = list(self._to_meter_grid(points, refline))
+
+    def _to_meter_grid(self, points: [Vector], refline: Line):
+        """
+        Transform the given (lon, lat) points such that the reference line is
+        on the x axis and the y coordinate of a point being its shortest
+        distance from the reference line. The unit of the resulting cartesian
+        grid is 1 Meter.
+        After this transformation, each point's deviation is its y coordinate.
+        :param points: iterable of (lon, lat) Vector instances to transform
+        :param refline: Line instance that becomes the new x axis
+        :return: iterable of transformed points
+        """
+        start = refline.point(0)
+        end = refline.point(1)
+        return mercator_project(start, azimuth(start, end), points)
+
+    def calculate(self):
+        """
+        :return: result of the measure (e.g. maximum or an average)
+        """
         raise NotImplementedError()
 
-    def aggregate(self):
-        """
-        :return: aggregation of all deviations (e.g. the maximum or an average)
-        """
-        raise NotImplementedError()
+
+class AbsoluteDeviationMeasure(Measure):
+    """Deviation measure considering the absolute deviation."""
+    def _absolute_deviations(self):
+        return [abs(p.y) for p in self.points]
 
 
-class MeterDeviation(Measure):
-    """
-    Scoring method using the deviation of points from the line in meters as
-    critical measure.
-    """
-    def measure_deviation(self, point, actual):
-        point = lonlat(*point)
-        actual = lonlat(*actual)
-        return 1000*geodesic(point, actual).km
-
-
-class MaxDeviation(MeterDeviation):
+class MaxDeviation(AbsoluteDeviationMeasure):
     """Maximum deviation from the line in meters."""
     desc = 'Maximum deviation in meters'
 
-    def aggregate(self):
-        return max(self.measures)
+    def calculate(self):
+        return max(self._absolute_deviations())
 
 
-
-class AvgDeviation(MeterDeviation):
+class AvgDeviation(AbsoluteDeviationMeasure):
     """Average deviation from the line in meters."""
     desc = 'Average deviation in meters'
 
-    def aggregate(self):
-        return sum(self.measures)/len(self.measures)
+    def calculate(self):
+        return sum(self._absolute_deviations())/len(self.points)
 
 
-class SquareDeviationAvg(MeterDeviation):
+class SquareDeviationAvg(Measure):
     """
     Average squared deviation from the line in meters^2.
-    This measure punishes bigger deviations more than small ones.
+    This measure punishes bigger distances more than small ones.
     """
     desc = 'Average squared deviation'
 
-    def aggregate(self):
-        return sum(map(lambda x: x**2, self.measures))/len(self.measures)
+    def calculate(self):
+        return sum([p.y**2 for p in self.points])/len(self.points)

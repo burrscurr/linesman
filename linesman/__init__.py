@@ -1,7 +1,9 @@
 import argparse
+import sys
 
 from .parse import lonlat_pair_str, gpx_file, gpx_extract_points
 from .measure import MaxDeviation, AvgDeviation, SquareDeviationAvg
+from .geometry import Line
 
 
 try:                         # python ^3.8
@@ -56,7 +58,11 @@ def _argparser():
     return parser
 
 
-def run():
+def get_evaluation_measure():
+    """
+    :return: Measure instance configured according to the command line
+    parameters
+    """
     parser = _argparser()
     args = parser.parse_args()
 
@@ -66,16 +72,15 @@ def run():
     except ValueError as e:
         abort(str(e))
 
-    # define the reference line from the first/last point in the gpx file, if
-    # not explicitly defined with --line
-    if args.line:
-        point_a = args.line[0]
-        point_b = args.line[1]
-    else:
-        point_a = points[0]
-        point_b = points[-1]
-    if point_a == point_b:
-        abort('Points defining the line must not be equal!')
+    # if not explicitly given, let first/last point define the reference line
+    if not args.line:
+        try:
+            args.line = Line(points[0], points[-1])
+        except ValueError as e:  # may happen if both points are equal
+            abort(str(e))
+    return Measure(points, args.line, resample=False)
 
-    m = Measure(points, point_a, point_b)
-    print(f'{m.desc}: {m.aggregate()}')
+
+def run():
+    m = get_evaluation_measure()
+    print(f'{m.desc}: {m.calculate()}')
