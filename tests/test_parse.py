@@ -1,11 +1,22 @@
 import pytest
 import argparse
 import tempfile
+import uuid
+import os
 
 from gpxpy.gpx import GPX, GPXTrackPoint, GPXXMLSyntaxException
 
 from linesman.parse import lonlat_str, lonlat_pair_str, gpx_file, gpx_extract_points
 from linesman.geometry import Vector, Line
+
+
+@pytest.fixture
+def temp_file_path():
+    path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
+    with open(path, 'a'):
+        pass
+    yield path
+    os.remove(path)
 
 
 def test_lonlat_str_no_comma():
@@ -40,10 +51,9 @@ def test_gpx_file_no_readable_file():
         gpx_file('no readable gpx file')
 
 
-def test_gpx_file_invalid_gpx_syntax():
+def test_gpx_file_invalid_gpx_syntax(temp_file_path):
     with pytest.raises(GPXXMLSyntaxException):
-        with tempfile.NamedTemporaryFile() as f:
-            gpx_file(f.name)
+        gpx_file(temp_file_path)
 
 
 def test_gpx_extract_points_no_tracks():
