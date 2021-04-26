@@ -19,7 +19,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.6"
 gpxpy = "^1.4.2"
-importlib-metadata = {version = ">=1,<4", python = "<3.8"}
+importlib-metadata = {version = ">=1,<5", python = "<3.8"}
 geographiclib = "^1.50"
 pyproj = "^3.0.0"
 
